@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>985705315919-vcikmtiebq8iq2n9163lanq553utm7vo.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.985705315919-vcikmtiebq8iq2n9163lanq553utm7vo</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>985705315919-9rbefg20cqq1ertpckmggm2ei2te9lnv.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCOBM-4vVE1Nc_nJik59GKyrjrjQeYXHtE</string>
+	<key>GCM_SENDER_ID</key>
+	<string>985705315919</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.bfcai.lifement</string>
+	<key>PROJECT_ID</key>
+	<string>medical-reminder-3e48b</string>
+	<key>STORAGE_BUCKET</key>
+	<string>medical-reminder-3e48b.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:985705315919:ios:94655e0d6af9f4fb89343a</string>
+	<key>DATABASE_URL</key>
+	<string>https://medical-reminder-3e48b.firebaseio.com</string>
+</dict>
+</plist>

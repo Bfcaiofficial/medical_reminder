@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="76" height="72" viewBox="0 0 76 72">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ffedd4"/>
+      <stop offset="1" stop-color="#ffb9a2"/>
+    </linearGradient>
+    <clipPath id="clip-path">
+      <path id="Path_45" data-name="Path 45" d="M27.843-4.368C54.357-11.1,58.694,23.093,67.773,30.115S79.01,45.426,72.067,58.278s-49.539,9.651-64.594,0S1.328,2.361,27.843-4.368Z" transform="translate(-0.169 5.241)" fill="url(#linear-gradient)"/>
+    </clipPath>
+    <clipPath id="clip-path-2">
+      <rect id="Rectangle_1502" data-name="Rectangle 1502" width="21" height="37" fill="none"/>
+    </clipPath>
+  </defs>
+  <g id="icon" transform="translate(-52.278 -127.109)">
+    <path id="Path_42" data-name="Path 42" d="M27.843-4.368C54.357-11.1,58.694,23.093,67.773,30.115S79.01,45.426,72.067,58.278s-49.539,9.651-64.594,0S1.328,2.361,27.843-4.368Z" transform="translate(52.109 132.349)" fill="url(#linear-gradient)"/>
+    <g id="Group_282" data-name="Group 282" transform="translate(52.278 127.109)">
+      <g id="Mask_Group_2" data-name="Mask Group 2" transform="translate(0 0)" clip-path="url(#clip-path)">
+        <g id="hospital-buildings" transform="translate(-6.267 16.534)">
+          <path id="Path_44" data-name="Path 44" d="M75.859,63.084a2.73,2.73,0,0,0,.148-.882V29.8a2.809,2.809,0,0,0-2.837-2.781H57.383V61.507a4.583,4.583,0,0,1-.282,1.577H55.249A2.73,2.73,0,0,0,55.4,62.2v-44.5a2.809,2.809,0,0,0-2.837-2.781H27.793a2.808,2.808,0,0,0-2.836,2.781V62.2a2.73,2.73,0,0,0,.148.882H23.254a4.583,4.583,0,0,1-.282-1.577V27.024H7.563A2.808,2.808,0,0,0,4.728,29.8V62.2a2.753,2.753,0,0,0,.147.882H0v5.748H80.355V63.084ZM13.235,51.726H9.169V47.741h4.065Zm0-7H9.169V40.742h4.065Zm0-6.767H9.169V33.976h4.065Zm6.335,13.764H15.5V47.741h4.065Zm0-7H15.5V40.742h4.065Zm0-6.767H15.5V33.976h4.065ZM46.488,62.9H34.553V48.3H46.488ZM40.177,35.782a9.8,9.8,0,1,1,10-9.8A9.9,9.9,0,0,1,40.177,35.782ZM65.986,51.726H61.921V47.741h4.064Zm0-7H61.921V40.742h4.064Zm0-6.767H61.921V33.976h4.064Zm6.334,13.764H68.255V47.741h4.064Zm0-7H68.255V40.742h4.064Zm0-6.767H68.255V33.976h4.064ZM42.658,23.547h3.829v4.866H42.658v3.756H37.7V28.413H33.867V23.547H37.7V19.793h4.962Z" transform="translate(0 -14.926)" fill="#515151"/>
+        </g>
+      </g>
+      <g id="Mask_Group_3" data-name="Mask Group 3" transform="translate(50.589 27.336)" clip-path="url(#clip-path-2)">
+        <g id="hospital-buildings-2" data-name="hospital-buildings" transform="translate(-57 -12)">
+          <path id="Path_44-2" data-name="Path 44" d="M75.992,64.124a2.839,2.839,0,0,0,.148-.9v-33.1A2.841,2.841,0,0,0,73.3,27.285H57.484V62.513a4.765,4.765,0,0,1-.283,1.611H55.346a2.839,2.839,0,0,0,.148-.9V17.767a2.841,2.841,0,0,0-2.841-2.841H27.842A2.84,2.84,0,0,0,25,17.767V63.223a2.839,2.839,0,0,0,.148.9H23.295a4.765,4.765,0,0,1-.283-1.611V27.285H7.576a2.84,2.84,0,0,0-2.841,2.841v33.1a2.863,2.863,0,0,0,.147.9H0V70H80.5V64.124Zm-62.734-11.6H9.185V48.45h4.072Zm0-7.149H9.185V41.3h4.072Zm0-6.913H9.185V34.387h4.072ZM19.6,52.521H15.531V48.45H19.6Zm0-7.149H15.531V41.3H19.6Zm0-6.913H15.531V34.387H19.6ZM46.569,63.934H34.613V49.018H46.569Zm-6.322-27.7A10.015,10.015,0,1,1,50.263,26.219,10.014,10.014,0,0,1,40.248,36.233ZM66.1,52.521H62.03V48.45H66.1Zm0-7.149H62.03V41.3H66.1Zm0-6.913H62.03V34.387H66.1Zm6.345,14.062H68.375V48.45h4.071Zm0-7.149H68.375V41.3h4.071Zm0-6.913H68.375V34.387h4.071ZM42.733,23.733h3.835V28.7H42.733v3.837H37.762V28.7H33.927V23.733h3.835V19.9h4.971Z" transform="translate(0 -14.926)" fill="#515151"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

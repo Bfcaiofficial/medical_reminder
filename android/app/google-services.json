@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "985705315919",
+    "firebase_url": "https://medical-reminder-3e48b.firebaseio.com",
+    "project_id": "medical-reminder-3e48b",
+    "storage_bucket": "medical-reminder-3e48b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:985705315919:android:2436609c5bdf8fbe89343a",
+        "android_client_info": {
+          "package_name": "com.bfcai.lifement"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "985705315919-20qu42picrpd88qm81bdpjva58i6hj8l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bfcai.lifement",
+            "certificate_hash": "987aa7ac6a895174ac24c6acd417849d66cbf0d6"
+          }
+        },
+        {
+          "client_id": "985705315919-9ooo9avpaen8767l379vbo6hei0kusa7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbXV2yVDobhZJUyIKauUkPbc9F4F0dgmg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "985705315919-uoivdfhuabtm3qgd8qmurm6fkefnnqa9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "985705315919-vcikmtiebq8iq2n9163lanq553utm7vo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bfcai.lifement"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
