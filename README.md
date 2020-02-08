@@ -1,5 +1,10 @@
 # medical_reminder
 
+## this application will make the user able to:
+###Adding remainders to his medicines or reservations so he don’t miss anything important for his health.
+###Search for any surgery, rays or department in any hospital nearby him by using his location, and this will save a lot of time and effort for him.
+###Add their children to be able to track their vaccines progress and find some useful information about each vaccine.
+###Show a notification in emergencies that contains some medical information about him, and contact his family and his friends.
 
 
 
