@@ -102,7 +102,7 @@ List<City> getEgyptCities(langCode) => [
         longitude: 33.797117,
       ),
       City(
-        name: langCode == 'en' ? 'Banha' : 'بنها',
+        name: langCode == 'en' ? 'Al Qalyubiyah' : 'القليوبية',
         latitude: 30.459065,
         longitude: 31.178577,
       ),

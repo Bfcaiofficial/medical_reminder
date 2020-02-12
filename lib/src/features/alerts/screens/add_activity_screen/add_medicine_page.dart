@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
 
 import './../../../../core/mixins/internet_connection_status_mixin.dart';
@@ -23,6 +24,8 @@ class AddMedicinePage extends StatefulWidget {
   @override
   _AddMedicinePageState createState() => _AddMedicinePageState();
 }
+
+bool _isLoading = false;
 
 class _AddMedicinePageState extends State<AddMedicinePage>
     with InternetConnectionStatusMixin {
@@ -73,6 +76,8 @@ class _AddMedicinePageState extends State<AddMedicinePage>
 
   @override
   Widget build(BuildContext context) {
+    notificationsProvider =
+        Provider.of<NotificationProvider>(context, listen: false);
     if (widget.id != null &&
         _currentChosenStartDate == null &&
         _currentChosenMedicineTime == null) {
@@ -94,65 +99,29 @@ class _AddMedicinePageState extends State<AddMedicinePage>
       notesFieldController.text = medicineData.notes;
     }
 
-    return Container(
-      margin: const EdgeInsets.all(20.0),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10.0),
-          boxShadow: [
-            BoxShadow(
-              blurRadius: 20.0,
-              color: Colors.grey[200],
-            ),
-          ]),
-      child: LayoutBuilder(
-        builder: (ctx, constraints) {
-          return Container(
-            height: constraints.maxHeight,
-            width: constraints.maxWidth,
-            padding: const EdgeInsets.all(15.0),
-            child: ListView(
-              children: <Widget>[
-                TextField(
-                  controller: medicineNameFieldController,
-                  style: Theme.of(context)
-                      .textTheme
-                      .display2
-                      .copyWith(color: Colors.black),
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.blue,
-                      ),
-                    ),
-                    labelText: labelsProvider.medicineName,
-                    labelStyle: Theme.of(context)
-                        .textTheme
-                        .display1
-                        .copyWith(color: Colors.grey[400]),
-                  ),
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {
-                    _openDatePicker(context).then((chosenDate) {
-                      if (chosenDate == null) {
-                        startDateFieldController.text = '';
-                        return null;
-                      }
-                      startDateFieldController.text =
-                          DateFormat.yMd().format(chosenDate);
-                      setState(() {
-                        _currentChosenStartDate = chosenDate;
-                      });
-                    });
-                  },
-                  child: TextField(
-                    enabled: false,
-                    controller: startDateFieldController,
+    return ModalProgressHUD(
+      inAsyncCall: _isLoading,
+      child: Container(
+        margin: const EdgeInsets.all(20.0),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10.0),
+            boxShadow: [
+              BoxShadow(
+                blurRadius: 20.0,
+                color: Colors.grey[200],
+              ),
+            ]),
+        child: LayoutBuilder(
+          builder: (ctx, constraints) {
+            return Container(
+              height: constraints.maxHeight,
+              width: constraints.maxWidth,
+              padding: const EdgeInsets.all(15.0),
+              child: ListView(
+                children: <Widget>[
+                  TextField(
+                    controller: medicineNameFieldController,
                     style: Theme.of(context)
                         .textTheme
                         .display2
@@ -163,167 +132,206 @@ class _AddMedicinePageState extends State<AddMedicinePage>
                           color: Colors.blue,
                         ),
                       ),
-                      labelText: labelsProvider.startDate,
+                      labelText: labelsProvider.medicineName,
                       labelStyle: Theme.of(context)
                           .textTheme
                           .display1
                           .copyWith(color: Colors.grey[400]),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                TextField(
-                  controller: medicinePeriodPerDayFieldController,
-                  keyboardType: TextInputType.number,
-                  style: Theme.of(context)
-                      .textTheme
-                      .display2
-                      .copyWith(color: Colors.black),
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.blue,
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      _openDatePicker(context).then((chosenDate) {
+                        if (chosenDate == null) {
+                          startDateFieldController.text = '';
+                          return null;
+                        }
+                        startDateFieldController.text =
+                            DateFormat.yMd().format(chosenDate);
+                        setState(() {
+                          _currentChosenStartDate = chosenDate;
+                        });
+                      });
+                    },
+                    child: TextField(
+                      enabled: false,
+                      controller: startDateFieldController,
+                      style: Theme.of(context)
+                          .textTheme
+                          .display2
+                          .copyWith(color: Colors.black),
+                      decoration: InputDecoration(
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.blue,
+                          ),
+                        ),
+                        labelText: labelsProvider.startDate,
+                        labelStyle: Theme.of(context)
+                            .textTheme
+                            .display1
+                            .copyWith(color: Colors.grey[400]),
                       ),
                     ),
-                    labelText: labelsProvider.medicinePeriodPerDays,
-                    labelStyle: Theme.of(context)
-                        .textTheme
-                        .display1
-                        .copyWith(color: Colors.grey[400]),
                   ),
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {
-                    _openMedicinePeriodDialog(context).then((result) {
-                      if (result == null) {
-                        medicinePeriodFieldController.text = '';
-                        return;
-                      }
-
-                      _currentPeriodOptionChosen = result['selectedValue'];
-                      _currentMedicinePeriod = result['days'];
-
-                      switch (result['selectedValue']) {
-                        case 1:
-                          medicinePeriodFieldController.text =
-                              labelsProvider.daily;
-                          break;
-                        case 2:
-                          medicinePeriodFieldController.text =
-                              '${labelsProvider.every} $_currentMedicinePeriod ${labelsProvider.days}';
-                          break;
-                        default:
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  TextField(
+                    controller: medicinePeriodPerDayFieldController,
+                    keyboardType: TextInputType.number,
+                    style: Theme.of(context)
+                        .textTheme
+                        .display2
+                        .copyWith(color: Colors.black),
+                    decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.blue,
+                        ),
+                      ),
+                      labelText: labelsProvider.medicinePeriodPerDays,
+                      labelStyle: Theme.of(context)
+                          .textTheme
+                          .display1
+                          .copyWith(color: Colors.grey[400]),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      _openMedicinePeriodDialog(context).then((result) {
+                        if (result == null) {
                           medicinePeriodFieldController.text = '';
-                      }
-                    });
-                  },
-                  child: TextField(
-                    controller: medicinePeriodFieldController,
-                    enabled: false,
-                    style: Theme.of(context)
-                        .textTheme
-                        .display2
-                        .copyWith(color: Colors.black),
-                    decoration: InputDecoration(
-                      labelText: labelsProvider.medicinePeriod,
-                      labelStyle: Theme.of(context)
+                          return;
+                        }
+
+                        _currentPeriodOptionChosen = result['selectedValue'];
+                        _currentMedicinePeriod = result['days'];
+
+                        switch (result['selectedValue']) {
+                          case 1:
+                            medicinePeriodFieldController.text =
+                                labelsProvider.daily;
+                            break;
+                          case 2:
+                            medicinePeriodFieldController.text =
+                                '${labelsProvider.every} $_currentMedicinePeriod ${labelsProvider.days}';
+                            break;
+                          default:
+                            medicinePeriodFieldController.text = '';
+                        }
+                      });
+                    },
+                    child: TextField(
+                      controller: medicinePeriodFieldController,
+                      enabled: false,
+                      style: Theme.of(context)
                           .textTheme
-                          .display1
-                          .copyWith(color: Colors.grey[400]),
+                          .display2
+                          .copyWith(color: Colors.black),
+                      decoration: InputDecoration(
+                        labelText: labelsProvider.medicinePeriod,
+                        labelStyle: Theme.of(context)
+                            .textTheme
+                            .display1
+                            .copyWith(color: Colors.grey[400]),
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {
-                    _openTimePicker(context).then((chosenTime) {
-                      if (chosenTime == null) {
-                        medicineTimeFieldController.text = '';
-                        return null;
-                      }
-                      medicineTimeFieldController.text =
-                          chosenTime.format(context);
-                      setState(() {
-                        _currentChosenMedicineTime = chosenTime;
-                        print('\nChosen Time: $_currentChosenMedicineTime\n');
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      _openTimePicker(context).then((chosenTime) {
+                        if (chosenTime == null) {
+                          medicineTimeFieldController.text = '';
+                          return null;
+                        }
+                        medicineTimeFieldController.text =
+                            chosenTime.format(context);
+                        setState(() {
+                          _currentChosenMedicineTime = chosenTime;
+                          print('\nChosen Time: $_currentChosenMedicineTime\n');
+                        });
                       });
-                    });
-                  },
-                  child: TextField(
-                    enabled: false,
-                    controller: medicineTimeFieldController,
+                    },
+                    child: TextField(
+                      enabled: false,
+                      controller: medicineTimeFieldController,
+                      style: Theme.of(context)
+                          .textTheme
+                          .display2
+                          .copyWith(color: Colors.black),
+                      decoration: InputDecoration(
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.blue,
+                          ),
+                        ),
+                        labelText: labelsProvider.medicineTime,
+                        labelStyle: Theme.of(context)
+                            .textTheme
+                            .display1
+                            .copyWith(color: Colors.grey[400]),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  TextField(
+                    controller: notesFieldController,
                     style: Theme.of(context)
                         .textTheme
                         .display2
                         .copyWith(color: Colors.black),
+                    minLines: 5,
+                    maxLines: 20,
                     decoration: InputDecoration(
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: Colors.blue,
                         ),
                       ),
-                      labelText: labelsProvider.medicineTime,
+                      labelText: labelsProvider.note,
                       labelStyle: Theme.of(context)
                           .textTheme
                           .display1
                           .copyWith(color: Colors.grey[400]),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                TextField(
-                  controller: notesFieldController,
-                  style: Theme.of(context)
-                      .textTheme
-                      .display2
-                      .copyWith(color: Colors.black),
-                  minLines: 5,
-                  maxLines: 20,
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.blue,
-                      ),
+                  SizedBox(
+                    height: 30.0,
+                  ),
+                  RaisedButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0)),
+                    color: Theme.of(context).accentColor,
+                    padding: const EdgeInsets.symmetric(vertical: 15.0),
+                    onPressed: _saveNewMedicine,
+                    child: Text(
+                      labelsProvider.save,
+                      style: Theme.of(context).textTheme.title,
                     ),
-                    labelText: labelsProvider.note,
-                    labelStyle: Theme.of(context)
-                        .textTheme
-                        .display1
-                        .copyWith(color: Colors.grey[400]),
                   ),
-                ),
-                SizedBox(
-                  height: 30.0,
-                ),
-                RaisedButton(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0)),
-                  color: Theme.of(context).accentColor,
-                  padding: const EdgeInsets.symmetric(vertical: 15.0),
-                  onPressed: _saveNewMedicine,
-                  child: Text(
-                    labelsProvider.save,
-                    style: Theme.of(context).textTheme.title,
+                  SizedBox(
+                    height: 20.0,
                   ),
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-              ],
-            ),
-          );
-        },
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -372,6 +380,9 @@ class _AddMedicinePageState extends State<AddMedicinePage>
 
     if (medicinePeriodPerDayFieldController.text.isEmpty) {
       message += labelsProvider.periodPerDaysRequired;
+    } else if (int.parse(medicinePeriodPerDayFieldController.text.trim()) ==
+        0) {
+      message += labelsProvider.medicinePeriodPerDaysMustBeGreaterThanZero;
     }
 
     if (medicinePeriodFieldController.text.isEmpty) {
@@ -433,7 +444,8 @@ class _AddMedicinePageState extends State<AddMedicinePage>
 
     int daysOfMedicine;
     try {
-      daysOfMedicine = int.parse(medicinePeriodPerDayFieldController.text);
+      daysOfMedicine =
+          int.parse(medicinePeriodPerDayFieldController.text.trim());
     } on Exception catch (error) {
       Flushbar(
         icon: Icon(
@@ -464,17 +476,17 @@ class _AddMedicinePageState extends State<AddMedicinePage>
     medicinesProvider = Provider.of<MedicinesProvider>(context, listen: false);
 
     if (widget.id != null) {
-      final medicineData =
-          Provider.of<MedicinesProvider>(context, listen: false)
-              .medicineList
-              .firstWhere((medicine) => medicine.id == widget.id);
+      final medicineData = medicinesProvider.medicineList
+          .firstWhere((medicine) => medicine.id == widget.id);
 
       newMedicine.id = medicineData.id;
+
       newMedicine.idOnServer = medicineData.idOnServer;
       newMedicine.progress = medicineData.progress;
 
       if (newMedicine.startDate == null) {
         newMedicine.startDate = medicineData.startDate;
+        newMedicine.dates = medicineData.dates;
       }
 
       if (newMedicine.time == null) {
@@ -483,13 +495,35 @@ class _AddMedicinePageState extends State<AddMedicinePage>
 
       if (newMedicine.period == null) {
         newMedicine.period = medicineData.period;
-        _currentMedicinePeriod = medicineData.period;
       }
 
-      if (newMedicine.dates == null) {
-        _currentChosenStartDate = medicineData.startDate;
-        if (_currentChosenMedicineTime == null)
+      if (newMedicine.periodPerDays == null) {
+        newMedicine.periodPerDays = medicineData.periodPerDays;
+      }
+
+      if (_currentMedicinePeriod != null ||
+          daysOfMedicine != medicineData.periodPerDays ||
+          _currentChosenMedicineTime != null ||
+          _currentChosenStartDate != null) {
+        if (_currentChosenMedicineTime == null) {
           _currentChosenMedicineTime = medicineData.time;
+        }
+
+        if (_currentChosenStartDate == null) {
+          _currentChosenStartDate = medicineData.startDate;
+        }
+
+        if (_currentMedicinePeriod == null) {
+          _currentMedicinePeriod = medicineData.period;
+        }
+
+        setState(() {
+          _isLoading = true;
+        });
+        await notificationsProvider.removeNotificationsOf(widget.id);
+        setState(() {
+          _isLoading = false;
+        });
         newMedicine.dates = _getMedicineDayes(
           newMedicine,
           previousNumberOfDays: medicineData.periodPerDays,
@@ -517,7 +551,8 @@ class _AddMedicinePageState extends State<AddMedicinePage>
     DateTime previousStartDate,
     TimeOfDay previousMedTime,
   }) {
-    final numberOfDays = int.parse(medicinePeriodPerDayFieldController.text);
+    final numberOfDays =
+        int.parse(medicinePeriodPerDayFieldController.text.trim());
     final startDate = DateTime(
       _currentChosenStartDate.year,
       _currentChosenStartDate.month,
@@ -538,9 +573,13 @@ class _AddMedicinePageState extends State<AddMedicinePage>
             startDate.add(Duration(days: _currentMedicinePeriod)), medicine);
       }
     } else {
+      if (medicine.progress == 0)
+        _scheduleNotificationByDate(
+            startDate.add(Duration(seconds: 5)), medicine);
+
       _scheduleNotificationByDate(
           startDate.add(Duration(days: _currentMedicinePeriod)), medicine);
-      if (2 * _currentMedicinePeriod < medicine.periodPerDays) {
+      if (2 * _currentMedicinePeriod < numberOfDays) {
         _scheduleNotificationByDate(
             startDate.add(Duration(days: 2 * _currentMedicinePeriod)),
             medicine);
@@ -559,17 +598,17 @@ class _AddMedicinePageState extends State<AddMedicinePage>
         0,
         0,
       );
-      notificationsProvider.removeNotificationsOf(medicine.id);
+      //notificationsProvider.removeNotificationsOf(medicine.id);
       _cancelNotification(date);
-      _cancelNotification(date.add(Duration(days: _currentMedicinePeriod)));
-      _cancelNotification(date.add(Duration(days: 2 * _currentMedicinePeriod)));
+      _cancelNotification(date.add(Duration(days: previousMedPeriod)));
+      _cancelNotification(date.add(Duration(days: 2 * previousMedPeriod)));
       // for (int days = previousMedPeriod;
       //     x < previousNumberOfDays;
       //     x += 1, days += previousMedPeriod) {
       //   _cancelNotification(date.add(Duration(days: days)));
       // }
 
-      x = medicine.progress;
+      if (medicine.progress > 1) x = medicine.progress;
     }
 
     for (int days = _currentMedicinePeriod;
@@ -638,8 +677,6 @@ class _AddMedicinePageState extends State<AddMedicinePage>
       androidAllowWhileIdle: true,
     );
 
-    notificationsProvider =
-        Provider.of<NotificationProvider>(context, listen: false);
     notificationsProvider.addNotification(AppNotification(
       id: medicine.id,
       isHandled: false,

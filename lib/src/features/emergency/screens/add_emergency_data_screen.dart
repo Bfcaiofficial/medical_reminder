@@ -129,6 +129,7 @@ class AddEmergencyDataScreen extends StatelessWidget {
                       data: ThemeData(primaryColor: Colors.blueAccent),
                       child: TextField(
                         controller: phoneFieldController,
+                        keyboardType: TextInputType.phone,
                         decoration: InputDecoration(
                           labelText:
                               labelsProvider.phoneNumbersForEmergencyCases,

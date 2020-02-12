@@ -101,6 +101,36 @@ class PersonalDataProvider with ChangeNotifier, InternetConnectionStatusMixin {
     return true;
   }
 
+  Future<String> sendEmergencyMessage(
+      String message, String phoneNumber) async {
+    Map<String, String> body = {
+      'Body': message,
+      'From': '+12015524163',
+      'To': '+2$phoneNumber',
+    };
+
+    final username = 'AC2da399fa5ae546b1733b0f2daa9876ba';
+    final password = 'e276a46ef1f924305675995b17c35c22';
+
+    http.Response response = await http.post(
+      'https://api.twilio.com/2010-04-01/Accounts/AC2da399fa5ae546b1733b0f2daa9876ba/Messages.json',
+      body: body,
+      headers: {'authorization': basicAuthenticationHeader(username, password)},
+    );
+
+    print('Send Message' + response.body);
+
+    if (response.statusCode == 400)
+      return (json.decode(response.body) as Map<String, dynamic>)['message']
+          .toString();
+    else
+      return 'Emergency Message sent successfully';
+  }
+
+  String basicAuthenticationHeader(String username, String password) {
+    return 'Basic ' + base64Encode(utf8.encode('$username:$password'));
+  }
+
   void setDataLoaded(isLoaded) {
     _loaded = isLoaded;
   }

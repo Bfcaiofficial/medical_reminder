@@ -49,89 +49,91 @@ class _MedicinePeriodRadioGroupState extends State<MedicinePeriodRadioGroup> {
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.32,
-      child: Column(
-        children: <Widget>[
-          Container(
-            margin: const EdgeInsets.symmetric(
-              horizontal: 20.0,
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Container(
+              margin: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+              ),
+              child: Divider(
+                height: 10.0,
+                color: Colors.grey[700],
+              ),
             ),
-            child: Divider(
-              height: 10.0,
-              color: Colors.grey[700],
+            _buildPeriodOption(
+              title: labelsProvider.daily,
+              radioValue: 1,
+              context: context,
             ),
-          ),
-          _buildPeriodOption(
-            title: labelsProvider.daily,
-            radioValue: 1,
-            context: context,
-          ),
-          _buildPeriodOption(
-            title: labelsProvider.perSpecificPeriod,
-            radioValue: 2,
-            context: context,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              new IconButton(
-                onPressed: _currentRadioValue == 2 ? _incrementDays : null,
-                icon: new Icon(
-                  Icons.add,
-                  color: _currentRadioValue == 2 ? Colors.black : Colors.grey,
-                ),
-              ),
-              new Text('$_days', style: Theme.of(context).textTheme.display2),
-              new IconButton(
-                onPressed: _currentRadioValue == 2 ? _decrementDays : null,
-                icon: new Icon(
-                  const IconData(0xe15b, fontFamily: 'MaterialIcons'),
-                  color: _currentRadioValue == 2 ? Colors.black : Colors.grey,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 15.0,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              InkWell(
-                onTap: widget.onDialogDismissed,
-                child: Container(
-                  margin: EdgeInsets.only(
-                    left: 10.0,
-                  ),
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    labelsProvider.cancel,
-                    style: Theme.of(context).textTheme.display1.copyWith(
-                          color: Colors.red,
-                        ),
+            _buildPeriodOption(
+              title: labelsProvider.perSpecificPeriod,
+              radioValue: 2,
+              context: context,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                new IconButton(
+                  onPressed: _currentRadioValue == 2 ? _incrementDays : null,
+                  icon: new Icon(
+                    Icons.add,
+                    color: _currentRadioValue == 2 ? Colors.black : Colors.grey,
                   ),
                 ),
-              ),
-              InkWell(
-                onTap: () {
-                  if (_currentRadioValue == 1)
-                    widget.onDialogDone(_currentRadioValue, 1);
-                  else
-                    widget.onDialogDone(_currentRadioValue, _days);
-                },
-                child: Container(
-                  margin: EdgeInsets.only(right: 10.0),
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    labelsProvider.save,
-                    style: Theme.of(context).textTheme.display1.copyWith(
-                          color: Theme.of(context).accentColor,
-                        ),
+                new Text('$_days', style: Theme.of(context).textTheme.display2),
+                new IconButton(
+                  onPressed: _currentRadioValue == 2 ? _decrementDays : null,
+                  icon: new Icon(
+                    const IconData(0xe15b, fontFamily: 'MaterialIcons'),
+                    color: _currentRadioValue == 2 ? Colors.black : Colors.grey,
                   ),
                 ),
-              ),
-            ],
-          )
-        ],
+              ],
+            ),
+            SizedBox(
+              height: 15.0,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                InkWell(
+                  onTap: widget.onDialogDismissed,
+                  child: Container(
+                    margin: EdgeInsets.only(
+                      left: 10.0,
+                    ),
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      labelsProvider.cancel,
+                      style: Theme.of(context).textTheme.display1.copyWith(
+                            color: Colors.red,
+                          ),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    if (_currentRadioValue == 1)
+                      widget.onDialogDone(_currentRadioValue, 1);
+                    else
+                      widget.onDialogDone(_currentRadioValue, _days);
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(right: 10.0),
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      labelsProvider.save,
+                      style: Theme.of(context).textTheme.display1.copyWith(
+                            color: Theme.of(context).accentColor,
+                          ),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

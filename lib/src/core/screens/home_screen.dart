@@ -1,4 +1,7 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:medical_reminder/src/core/screens/profile.dart';
 import 'package:provider/provider.dart';
 import 'package:shake_event/shake_event.dart';
@@ -24,7 +27,51 @@ class _HomeScreenState extends State<HomeScreen> with ShakeHandler {
   int _selectedItemIndex = 0;
   var labelsProvider;
   var notifications;
+  PersonalDataProvider personalDataProvider;
   List<Map<String, dynamic>> _pages;
+  int loginOption;
+
+  NotificationDetails platformChannelSpecifics;
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
+  @override
+  void didChangeDependencies() {
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+    var initializationSettingsAndroid =
+        new AndroidInitializationSettings('app_icon');
+    var initializationSettingsIOS = IOSInitializationSettings(
+        onDidReceiveLocalNotification: (_, __, ___, ____) {});
+    var initializationSettings = InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOS);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: (_) {
+      // Routes.sailor
+      //     .navigate(PersonalDetailsScreen.routeName)
+      //     .then((_) => isEmergencyCaseHandled = false);
+    });
+
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+      DateTime.now().toString(),
+      'WARNNING: Emergency Case',
+      'Press to open emergency data',
+      sound: 'notification_sound',
+      importance: Importance.Max,
+      priority: Priority.High,
+      autoCancel: true,
+      groupKey: DateTime.now().toString(),
+      enableVibration: true,
+    );
+
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails(
+      sound: 'notification_sound.aiff',
+    );
+
+    platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+
+    super.didChangeDependencies();
+  }
 
   void _initializeLabelsProvider() {
     final langProvider = Provider.of<LanguageProvider>(context, listen: false);
@@ -34,6 +81,7 @@ class _HomeScreenState extends State<HomeScreen> with ShakeHandler {
 
     final accesTokenProvider =
         Provider.of<AuthAccessTokenProvider>(context, listen: false);
+    accesTokenProvider.getLoginOption().then((option) => loginOption = option);
 
     notificationsProvider.refreshNotificationList().then((_) {
       notifications = notificationsProvider.getTodayNotifications();
@@ -58,33 +106,35 @@ class _HomeScreenState extends State<HomeScreen> with ShakeHandler {
       {
         'title': labelsProvider.profilePageLabel,
         'icon': Icons.person_pin,
-        'pageContent': Profile(),
-        // 'pageContent': Center(
-        //     child: Column(
-        //   mainAxisSize: MainAxisSize.min,
-        //   children: <Widget>[
-        //     Padding(
-        //       padding: const EdgeInsets.all(8.0),
-        //       child: CircleAvatar(
-        //         backgroundColor: Theme.of(context).accentColor,
-        //         radius: 30.0,
-        //         child: Center(
-        //           child: Icon(
-        //             Icons.person,
-        //             size: 40,
-        //           ),
-        //         ),
-        //       ),
-        //     ),
-        //     SizedBox(
-        //       height: 10.0,
-        //     ),
-        //     Text(
-        //       accesTokenProvider.getEmailAddress(),
-        //       style: Theme.of(context).textTheme.display2,
-        //     ),
-        //   ],
-        // )),
+        'pageContent': loginOption == 0
+            ? Profile()
+            : Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircleAvatar(
+                        backgroundColor: Theme.of(context).accentColor,
+                        radius: 30.0,
+                        child: Center(
+                          child: Icon(
+                            Icons.person,
+                            size: 40,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Text(
+                      accesTokenProvider.getEmailAddress(),
+                      style: Theme.of(context).textTheme.display2,
+                    ),
+                  ],
+                ),
+              ),
       },
       {
         'title': labelsProvider.morePageLabel,
@@ -101,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> with ShakeHandler {
   @override
   Widget build(BuildContext context) {
     _initializeLabelsProvider();
-    final personalDataProvider =
+    personalDataProvider =
         Provider.of<PersonalDataProvider>(context, listen: false);
 
     if (!personalDataProvider.isDataLoaded) {
@@ -231,10 +281,71 @@ class _HomeScreenState extends State<HomeScreen> with ShakeHandler {
     //   ..startActivity().catchError((e) => print(e));
 
     if (!isEmergencyCaseHandled) {
-      isEmergencyCaseHandled = true;
+      final emergencyData = personalDataProvider.personalData;
+      if (emergencyData != null && emergencyData.phoneNumber.isNotEmpty) {
+        final location = await Geolocator().getCurrentPosition();
+        String locationUrl =
+            'https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}';
+        final emergencyMessage = """
+          \n\nEMERGENCY MESSAGE - HELP NEEDDED!!
+          \n\n${emergencyData.name} needs help from you, He is in danger now.
+          \n\nHis Data:
+          \nname: ${emergencyData.name},
+          \naddress: ${emergencyData.address},
+          \nbloodType: ${emergencyData.bloodType},
+          \nprevoius Diagnoses: ${emergencyData.previousDiagnosesAndNotes},
+          \n\n
+          \n\nرسالة طوارئ - المساعدة مطلوبة
+          \n\n${emergencyData.name} يحتاج مساعدتك انه فى خطر الان.
+          \n\nبياناته:
+          \nname: ${emergencyData.name},
+          \naddress: ${emergencyData.address},
+          \nbloodType: ${emergencyData.bloodType},
+          \nprevoius Diagnoses: ${emergencyData.previousDiagnosesAndNotes},
+
+          Location: $locationUrl
+          """;
+
+        personalDataProvider
+            .sendEmergencyMessage(
+          emergencyMessage,
+          emergencyData.phoneNumber,
+        )
+            .then((responseMessage) {
+          Flushbar(
+            icon: Icon(
+              responseMessage.startsWith('Emergency')
+                  ? Icons.done
+                  : Icons.error,
+              color: responseMessage.startsWith('Emergency')
+                  ? Colors.green
+                  : Colors.red,
+            ),
+            messageText: Text(
+              responseMessage,
+              style: Theme.of(context)
+                  .textTheme
+                  .display1
+                  .copyWith(color: Colors.white),
+            ),
+            duration: Duration(seconds: 5),
+          )..show(context);
+        }).catchError((error) => print(error.message));
+      }
+
       Routes.sailor
           .navigate(PersonalDetailsScreen.routeName)
           .then((_) => isEmergencyCaseHandled = false);
+
+      flutterLocalNotificationsPlugin.show(
+        1111111,
+        'WARNNING: Emergency Case',
+        'Press to open emergency data',
+        platformChannelSpecifics,
+        payload: 'emergency',
+      );
+
+      isEmergencyCaseHandled = true;
     }
 
     return super.shakeEventListener();

@@ -7,7 +7,8 @@ class CategoryItem extends StatelessWidget {
   final Function() onCategoryTappedCallback;
   final bool isPng;
 
-  CategoryItem({this.title, this.imageUrl, this.onCategoryTappedCallback, this.isPng});
+  CategoryItem(
+      {this.title, this.imageUrl, this.onCategoryTappedCallback, this.isPng});
 
   @override
   Widget build(BuildContext context) {
@@ -34,10 +35,21 @@ class CategoryItem extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    isPng ? Image.asset(imageUrl) : SvgPicture.asset(imageUrl),
-                    Text(
-                      title,
-                      style: Theme.of(context).textTheme.body2,
+                    Expanded(
+                        flex: 4,
+                        child: isPng
+                            ? Image.asset(imageUrl)
+                            : SvgPicture.asset(imageUrl)),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Expanded(
+                      child: FittedBox(
+                        child: Text(
+                          title,
+                          style: Theme.of(context).textTheme.body2,
+                        ),
+                      ),
                     ),
                   ],
                 ),

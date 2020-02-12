@@ -145,9 +145,15 @@ class ArabicLabels {
   final personalData = 'البيانات الشخصية';
   final String noPersonalDataAdded = 'لم يتم اضافة اى بيانات لحالات الطوارئ';
   final String day = 'يوم';
+  final String medicinePeriodPerDaysMustBeGreaterThanZero =
+      'فترة الدواء بالايام يجب ان تكون اكبر من صفر';
+  final String emergencyInstructions =
+      'عند تفعيل هذه الخاصية سيكون التطبيق حساس لاهتزاز الهاتف وعند الاهتزاز سيقوم بعرض صفحة البيانات الشخصية مع اشعار بحالة الطوارئ وسيتم ارسال رسالة نصية للرقم الموجود فى بيانات الطوارئ.';
 }
 
 class EnglishLabels {
+  final String medicinePeriodPerDaysMustBeGreaterThanZero =
+      'medicine period per days must be greater than zero';
   final String day = 'Days';
   final String noPersonalDataAdded =
       'The owner of the device didn\'t add any emergency data';
@@ -295,4 +301,6 @@ class EnglishLabels {
   final String phonePermissionRequired =
       'Phone permission is required for allowing this feature.';
   final String persons = 'Persons';
+  final String emergencyInstructions =
+      'When activating this feature our app will listen to device shakes, and when it shaked the personal data page will be displayed with a notification and a SMS message will be sent to the phone number in your emergency data with your current location and personal data.';
 }

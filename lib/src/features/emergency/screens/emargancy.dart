@@ -281,6 +281,16 @@ class _EmergancyState extends State<Emergancy>
                       }
                     },
                   ),
+                  Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: Text(
+                      labelsProvider.emergencyInstructions,
+                      style: Theme.of(context)
+                          .textTheme
+                          .body1
+                          .copyWith(color: Colors.grey),
+                    ),
+                  ),
                 ],
               ),
             ),

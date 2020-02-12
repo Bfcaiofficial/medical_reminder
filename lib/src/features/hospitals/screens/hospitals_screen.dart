@@ -255,9 +255,11 @@ class _HospitalsScreenState extends State<HospitalsScreen> {
               });
             },
           ),
-          Text(
-            title,
-            style: Theme.of(context).textTheme.display1,
+          Expanded(
+            child: Text(
+              title,
+              style: Theme.of(context).textTheme.display1,
+            ),
           ),
         ],
       ),

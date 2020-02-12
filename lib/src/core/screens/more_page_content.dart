@@ -3,17 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import '../../features/vaccinations/providers/vaccinations_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:sailor/sailor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import './../providers/auth_access_token_provider.dart';
-import './../providers/language_provider.dart';
 import './../../features/alerts/providers/medicines_provider.dart';
 import './../../features/login/screens/login.dart';
 import './../../reminder_app.dart';
+import './../providers/auth_access_token_provider.dart';
+import './../providers/language_provider.dart';
 import './../providers/notifications_provider.dart';
+import './../../features/emergency/providers/personal_data_provider.dart';
+import './../../features/vaccinations/providers/vaccinations_provider.dart';
 
 class MorePageContent extends StatefulWidget {
   final Function() refreshUiWithNewLanguage;
@@ -127,6 +128,10 @@ class _MorePageContentState extends State<MorePageContent> {
 
                       Provider.of<MedicinesProvider>(context, listen: false)
                           .setDataLoaded(false);
+
+                      Provider.of<PersonalDataProvider>(context, listen: false)
+                          .setDataLoaded(false);
+
                       Provider.of<NotificationProvider>(context, listen: false)
                           .clearNotificationsOfUser();
 

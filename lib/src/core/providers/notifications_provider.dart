@@ -55,27 +55,31 @@ class NotificationProvider with ChangeNotifier, InternetConnectionStatusMixin {
         'https://medical-reminder-3e48b.firebaseio.com/${appId}notifications/$id.json?auth=$_accessToken';
     final existingNotificationIndex = _notifications
         .indexWhere((notification) => notification.idOnServer == id);
-    var existingNotification = _notifications[existingNotificationIndex];
-    _notifications.removeAt(existingNotificationIndex);
-    print('Deleting...');
-    print('Notifications: $_notifications');
-    bool empty = false;
-    if (_notifications.isEmpty) empty = true;
+    if (existingNotificationIndex != -1) {
+      var existingNotification = _notifications[existingNotificationIndex];
+      _notifications.removeAt(existingNotificationIndex);
+      print('Deleting...');
+      print('Notifications: $_notifications');
+      bool empty = false;
+      if (_notifications.isEmpty) empty = true;
 
-    final response = await http.delete(url);
+      final response = await http.delete(url);
 
-    if (empty) _notifications.clear();
-    print('Notifications: $_notifications');
+      if (empty) _notifications.clear();
+      print('Notifications: $_notifications');
 
-    notifyListeners();
-
-    if (response.statusCode >= 400) {
-      _notifications.insert(existingNotificationIndex, existingNotification);
       notifyListeners();
-      //throw HttpException('Could not delete medicine.');
-      return false;
+
+      if (response.statusCode >= 400) {
+        _notifications.insert(existingNotificationIndex, existingNotification);
+        notifyListeners();
+        //throw HttpException('Could not delete medicine.');
+        return false;
+      } else {
+        return false;
+      }
+      existingNotification = null;
     }
-    existingNotification = null;
     return true;
   }
 
@@ -117,11 +121,12 @@ class NotificationProvider with ChangeNotifier, InternetConnectionStatusMixin {
         .toList();
   }
 
-  void removeNotificationsOf(String id) {
+  Future<void> removeNotificationsOf(String id) async {
     final tempNotifications =
-        _notifications.where((notification) => notification.id == id);
+        _notifications.where((notification) => notification.id == id).toList();
     for (AppNotification notification in tempNotifications) {
-      removeNotification(notification.idOnServer);
+      print('Founded Notification: ${notification.id}');
+      await removeNotification(notification.idOnServer);
     }
   }
 

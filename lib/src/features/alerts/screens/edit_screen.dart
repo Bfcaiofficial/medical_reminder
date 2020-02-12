@@ -19,9 +19,9 @@ class EditScreen extends StatelessWidget {
     langProvider = Provider.of<LanguageProvider>(context, listen: false);
 
     if (langProvider.langCode == 'en')
-      labelsProvider = langProvider.title as EnglishLabels;
+      labelsProvider = langProvider.labelsProvider as EnglishLabels;
     else
-      labelsProvider = langProvider.title as ArabicLabels;
+      labelsProvider = langProvider.labelsProvider as ArabicLabels;
   }
 
   @override

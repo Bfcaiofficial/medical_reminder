@@ -164,7 +164,15 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                                 children: <Widget>[
                                   TextField(
                                     controller: emailFieldController,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .body1
+                                        .copyWith(fontSize: 18.0),
                                     decoration: InputDecoration(
+                                      hintStyle: Theme.of(context)
+                                          .textTheme
+                                          .body1
+                                          .copyWith(fontSize: 18.0),
                                       hintText: labelsProvider.email,
                                     ),
                                   ),
@@ -175,9 +183,18 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                                     onSubmitted: (_) =>
                                         _loginWithEmailAndPassword(),
                                     controller: passwordFieldController,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .body1
+                                        .copyWith(fontSize: 18.0),
                                     obscureText: true,
                                     decoration: InputDecoration(
-                                        hintText: labelsProvider.password),
+                                      hintText: labelsProvider.password,
+                                      hintStyle: Theme.of(context)
+                                          .textTheme
+                                          .body1
+                                          .copyWith(fontSize: 18.0),
+                                    ),
                                   ),
                                   SizedBox(
                                     height: 10,
@@ -208,7 +225,13 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                                         _isRegistering
                                             ? labelsProvider.register
                                             : labelsProvider.login,
-                                        style: TextStyle(color: Colors.white),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .body1
+                                            .copyWith(
+                                              fontSize: 18.0,
+                                              color: Colors.white,
+                                            ),
                                       ),
                                     ),
                                   ),
@@ -221,10 +244,12 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                                       ),
                                     ),
                                   ),
+                                  SizedBox(height: 10.0),
                                   Text(
                                     labelsProvider.orYouCanLoginWith,
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    height: 15.0,
                                   ),
                                   Padding(
                                     padding:
@@ -237,14 +262,25 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                                           onPressed: _loginWithFacebook,
                                           child: Text(
                                             labelsProvider.facebook,
-                                            style:
-                                                TextStyle(color: Colors.white),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .body2
+                                                .copyWith(
+                                                  fontSize: 18.0,
+                                                  color: Colors.white,
+                                                ),
                                           ),
                                           color: Color(0xFF3B5998),
                                         ),
                                         RaisedButton(
                                           onPressed: _signInWithGoogle,
-                                          child: Text(labelsProvider.google),
+                                          child: Text(
+                                            labelsProvider.google,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .body2
+                                                .copyWith(fontSize: 18.0),
+                                          ),
                                           color: Colors.white,
                                         ),
                                       ],
@@ -379,7 +415,28 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
     setState(() {
       _isLoading = true;
     });
-    final googleSignInAccount = await _googleSignIn.signIn();
+    final googleSignInAccount =
+        await _googleSignIn.signIn().catchError((error) {
+      Flushbar(
+        icon: Icon(
+          Icons.error,
+          color: Colors.red,
+        ),
+        messageText: Text(
+          error.message,
+          style: Theme.of(context)
+              .textTheme
+              .display1
+              .copyWith(color: Colors.white),
+        ),
+        duration: Duration(seconds: 2),
+      )..show(context);
+      setState(() {
+        _isLoading = false;
+      });
+
+      return;
+    });
 
     if (googleSignInAccount == null) {
       setState(() {
@@ -463,7 +520,27 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
     setState(() {
       _isLoading = true;
     });
-    final facebookLoginResult = await _facebookSignIn.logIn(['email']);
+    final facebookLoginResult =
+        await _facebookSignIn.logIn(['email']).catchError((error) {
+      Flushbar(
+        icon: Icon(
+          Icons.error,
+          color: Colors.red,
+        ),
+        messageText: Text(
+          error.message,
+          style: Theme.of(context)
+              .textTheme
+              .display1
+              .copyWith(color: Colors.white),
+        ),
+        duration: Duration(seconds: 2),
+      )..show(context);
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    });
 
     switch (facebookLoginResult.status) {
       case FacebookLoginStatus.cancelledByUser:

@@ -41,7 +41,7 @@ class _AddChildPageState extends State<AddChildPage> {
   Widget build(BuildContext context) {
     _initializeLabelsProvider(context);
 
-    if (widget.id != null) {
+    if (widget.id != null && _chosenBirthdate == null) {
       final childData = childrenDataProvider.childrenList
           .firstWhere((child) => child.id == widget.id);
       nameFieldController.text = childData.name;
@@ -209,8 +209,14 @@ class _AddChildPageState extends State<AddChildPage> {
     } else {
       final oldChildData = childrenDataProvider.childrenList
           .firstWhere((child) => child.id == widget.id);
+
+      newChildData.idOnServer = oldChildData.idOnServer;
+      newChildData.progress = oldChildData.progress;
+
       childrenDataProvider.updateChildData(
-          oldChildData.idOnServer, newChildData);
+        oldChildData.idOnServer,
+        newChildData,
+      );
     }
 
     Navigator.of(context).pop();

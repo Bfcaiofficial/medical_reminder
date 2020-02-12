@@ -118,6 +118,7 @@ class VaccinationsProvider with ChangeNotifier, InternetConnectionStatusMixin {
     final childIndex = _children.indexWhere((child) => child.idOnServer == id);
     if (childIndex >= 0) {
       _children[childIndex] = newChildData;
+      print(newChildData);
       final url =
           'https://medical-reminder-3e48b.firebaseio.com/$appId-children/$id.json?auth=$_accessToken';
       await http.patch(url, body: json.encode(newChildData.toMap()));
