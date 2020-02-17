@@ -11,6 +11,7 @@ import './../mixins/internet_connection_status_mixin.dart';
 class NotificationProvider with ChangeNotifier, InternetConnectionStatusMixin {
   List<AppNotification> _notifications = [];
   String _accessToken = '';
+  bool _isLoaded = false;
 
   void setAccessToken(String token) {
     _accessToken = token;
@@ -104,7 +105,8 @@ class NotificationProvider with ChangeNotifier, InternetConnectionStatusMixin {
     });
 
     _notifications = loadedNotifications;
-    notifyListeners();
+    _isLoaded = true;
+    //notifyListeners();
     return true;
   }
 
@@ -134,5 +136,6 @@ class NotificationProvider with ChangeNotifier, InternetConnectionStatusMixin {
     _notifications = [];
   }
 
+  bool get isNotificationsLoaded => _isLoaded;
   List<AppNotification> get notificationList => [..._notifications];
 }

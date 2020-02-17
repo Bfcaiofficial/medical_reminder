@@ -359,59 +359,145 @@ class _HospitalsScreenState extends State<HospitalsScreen> {
     switch (_selectedCategoryIndex) {
       case 0:
         {
-          searchedHospitals = hospitalList.where((hospital) {
-            final Distance distanceObj = new Distance();
-            double distance = distanceObj.as(
-              LengthUnit.Kilometer,
-              LatLng(_chosenLocation['position'].latitude,
-                  _chosenLocation['position'].longitude),
-              LatLng(
-                hospital.location.latitude,
-                hospital.location.longitude,
-              ),
-            );
-            print('distance to ${hospital.name}: $distance');
-            return (hospital.name.toLowerCase().contains(searchText) &&
-                    distance < 50) ||
-                (searchText.contains(hospital.name.toLowerCase()) &&
-                    distance < 50);
-          }).toList();
+          if (_currentSearchLocationOption == 0) {
+            searchedHospitals = hospitalList.where((hospital) {
+              final Distance distanceObj = new Distance();
+              double distance = distanceObj.as(
+                LengthUnit.Kilometer,
+                LatLng(_chosenLocation['position'].latitude,
+                    _chosenLocation['position'].longitude),
+                LatLng(
+                  hospital.location.latitude,
+                  hospital.location.longitude,
+                ),
+              );
+              print('distance to ${hospital.name}: $distance');
+              return (hospital.name.toLowerCase().contains(searchText) &&
+                      distance < 50) ||
+                  (searchText.contains(hospital.name.toLowerCase()) &&
+                      distance < 50);
+            }).toList();
+          } else {
+            //handling searching by city id
+            print('city id is ${_chosenLocation['cityId']}');
+            searchedHospitals = hospitalList.where((hospital) {
+              return (hospital.name.toLowerCase().contains(searchText) &&
+                      hospital.cityId == _chosenLocation['cityId']) ||
+                  (searchText.contains(hospital.name.toLowerCase()) &&
+                      hospital.cityId == _chosenLocation['cityId']);
+            }).toList();
+          }
           break;
         }
       case 1:
         {
-          searchedHospitals = hospitalList.where(
-            (hospital) {
-              final Distance distanceObj = new Distance();
-              double distance = distanceObj.as(
-                LengthUnit.Kilometer,
-                LatLng(_chosenLocation['position'].latitude,
-                    _chosenLocation['position'].longitude),
-                LatLng(
-                  hospital.location.latitude,
-                  hospital.location.longitude,
-                ),
-              );
-              print('${hospital.id}: ${hospital.hasRaysCenter}');
-              print('distance to ${hospital.name}: $distance');
-
-              if (hospital.hasRaysCenter) {
-                final listOfDepts = hospital.raysAndAnalysis.where(
-                  (raysType) => (raysType.toLowerCase().contains(searchText) ||
-                      searchText.contains(raysType.toLowerCase())),
+          if (_currentSearchLocationOption == 0) {
+            searchedHospitals = hospitalList.where(
+              (hospital) {
+                final Distance distanceObj = new Distance();
+                double distance = distanceObj.as(
+                  LengthUnit.Kilometer,
+                  LatLng(_chosenLocation['position'].latitude,
+                      _chosenLocation['position'].longitude),
+                  LatLng(
+                    hospital.location.latitude,
+                    hospital.location.longitude,
+                  ),
                 );
-                return listOfDepts.isNotEmpty && distance < 50;
-              }
+                print('${hospital.id}: ${hospital.hasRaysCenter}');
+                print('distance to ${hospital.name}: $distance');
 
-              return false;
-            },
-          ).toList();
+                if (hospital.hasRaysCenter) {
+                  final listOfDepts = hospital.raysAndAnalysis.where(
+                    (raysType) =>
+                        (raysType.toLowerCase().contains(searchText) ||
+                            searchText.contains(raysType.toLowerCase())),
+                  );
+                  return listOfDepts.isNotEmpty && distance < 50;
+                }
+
+                return false;
+              },
+            ).toList();
+          } else {
+            //handling searching by city id
+
+            print('city id is ${_chosenLocation['cityId']}');
+            searchedHospitals = hospitalList.where(
+              (hospital) {
+                print('${hospital.id}: ${hospital.hasRaysCenter}');
+
+                if (hospital.hasRaysCenter) {
+                  final listOfDepts = hospital.raysAndAnalysis.where(
+                    (raysType) =>
+                        (raysType.toLowerCase().contains(searchText) ||
+                            searchText.contains(raysType.toLowerCase())),
+                  );
+                  return listOfDepts.isNotEmpty &&
+                      hospital.cityId == _chosenLocation['cityId'];
+                }
+
+                return false;
+              },
+            ).toList();
+          }
           break;
         }
       case 2:
         {
-          searchedHospitals = hospitalList.where(
-            (hospital) {
+          if (_currentSearchLocationOption == 0) {
+            searchedHospitals = hospitalList.where(
+              (hospital) {
+                final Distance distanceObj = new Distance();
+                double distance = distanceObj.as(
+                  LengthUnit.Kilometer,
+                  LatLng(_chosenLocation['position'].latitude,
+                      _chosenLocation['position'].longitude),
+                  LatLng(
+                    hospital.location.latitude,
+                    hospital.location.longitude,
+                  ),
+                );
+                print('${hospital.id}: ${hospital.hasSurgeryCenter}');
+                print('distance to ${hospital.name}: $distance');
+
+                if (hospital.hasSurgeryCenter) {
+                  final listOfDepts = hospital.surgeries.where(
+                    (surgeryType) =>
+                        (surgeryType.toLowerCase().contains(searchText) ||
+                            searchText.contains(surgeryType.toLowerCase())),
+                  );
+                  return listOfDepts.isNotEmpty && distance < 50;
+                }
+                return false;
+              },
+            ).toList();
+          } else {
+            //handling searching by city id
+            print('city id is ${_chosenLocation['cityId']}');
+            searchedHospitals = hospitalList.where(
+              (hospital) {
+                print('${hospital.id}: ${hospital.hasSurgeryCenter}');
+
+                if (hospital.hasSurgeryCenter) {
+                  final listOfDepts = hospital.surgeries.where(
+                    (surgeryType) =>
+                        (surgeryType.toLowerCase().contains(searchText) ||
+                            searchText.contains(surgeryType.toLowerCase())),
+                  );
+                  return listOfDepts.isNotEmpty &&
+                      hospital.cityId == _chosenLocation['cityId'];
+                }
+                return false;
+              },
+            ).toList();
+          }
+          break;
+        }
+      case 3:
+        {
+          if (_currentSearchLocationOption == 0) {
+            searchedHospitals = hospitalList.where((hospital) {
               final Distance distanceObj = new Distance();
               double distance = distanceObj.as(
                 LengthUnit.Kilometer,
@@ -422,41 +508,23 @@ class _HospitalsScreenState extends State<HospitalsScreen> {
                   hospital.location.longitude,
                 ),
               );
-              print('${hospital.id}: ${hospital.hasSurgeryCenter}');
               print('distance to ${hospital.name}: $distance');
-
-              if (hospital.hasSurgeryCenter) {
-                final listOfDepts = hospital.surgeries.where(
-                  (surgeryType) =>
-                      (surgeryType.toLowerCase().contains(searchText) ||
-                          searchText.contains(surgeryType.toLowerCase())),
-                );
-                return listOfDepts.isNotEmpty && distance < 50;
-              }
-              return false;
-            },
-          ).toList();
-          break;
-        }
-      case 3:
-        {
-          searchedHospitals = hospitalList.where((hospital) {
-            final Distance distanceObj = new Distance();
-            double distance = distanceObj.as(
-              LengthUnit.Kilometer,
-              LatLng(_chosenLocation['position'].latitude,
-                  _chosenLocation['position'].longitude),
-              LatLng(
-                hospital.location.latitude,
-                hospital.location.longitude,
-              ),
-            );
-            print('distance to ${hospital.name}: $distance');
-            final listOfDepts = hospital.departments.where((deptName) =>
-                (deptName.toLowerCase().contains(searchText) ||
-                    searchText.contains(deptName.toLowerCase())));
-            return listOfDepts.isNotEmpty && distance < 50;
-          }).toList();
+              final listOfDepts = hospital.departments.where((deptName) =>
+                  (deptName.toLowerCase().contains(searchText) ||
+                      searchText.contains(deptName.toLowerCase())));
+              return listOfDepts.isNotEmpty && distance < 50;
+            }).toList();
+          } else {
+            //handling searching by city id
+            print('city id is: ${_chosenLocation['cityId']}');
+            searchedHospitals = hospitalList.where((hospital) {
+              final listOfDepts = hospital.departments.where((deptName) =>
+                  (deptName.toLowerCase().contains(searchText) ||
+                      searchText.contains(deptName.toLowerCase())));
+              return listOfDepts.isNotEmpty &&
+                  hospital.cityId == _chosenLocation['cityId'];
+            }).toList();
+          }
           break;
         }
     }

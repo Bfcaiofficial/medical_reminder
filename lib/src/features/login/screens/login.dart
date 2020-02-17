@@ -566,6 +566,10 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
             ),
             duration: Duration(seconds: 2),
           )..show(context);
+
+          setState(() {
+            _isLoading = false;
+          });
           break;
         }
 

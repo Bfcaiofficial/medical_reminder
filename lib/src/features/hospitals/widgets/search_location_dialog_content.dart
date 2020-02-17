@@ -158,6 +158,7 @@ class _SearchLocationDialogContentState
                               return _buildLocationNameItem(
                                 location: {
                                   'name': searchedLocationList[index].name,
+                                  'cityId': searchedLocationList[index].id,
                                   'position': Position(
                                     latitude:
                                         searchedLocationList[index].latitude,

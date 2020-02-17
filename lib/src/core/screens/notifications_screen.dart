@@ -9,6 +9,7 @@ import './../widgets/notifications_item.dart';
 class NotificationsScreen extends StatelessWidget {
   var langProvider;
   var labelsProvider;
+  NotificationProvider notificationsProvider;
 
   void _initializeLabelsProvider(context) {
     langProvider = Provider.of<LanguageProvider>(context, listen: false);
@@ -23,8 +24,7 @@ class NotificationsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     _initializeLabelsProvider(context);
 
-    final notifications =
-        Provider.of<NotificationProvider>(context).getTodayNotifications();
+    notificationsProvider = Provider.of<NotificationProvider>(context);
 
     return Directionality(
       textDirection:
@@ -36,28 +36,41 @@ class NotificationsScreen extends StatelessWidget {
             style: Theme.of(context).textTheme.title,
           ),
         ),
-        body: notifications.isNotEmpty
-            ? ListView.builder(
-                itemCount: notifications.length,
-                itemBuilder: (ctx, index) {
-                  return NotificationItem(
-                    id: notifications[index].id,
-                    idOnServer: notifications[index].idOnServer,
-                    title: notifications[index].title,
-                    description: notifications[index].description,
-                    date: notifications[index].date,
-                    eventType: notifications[index].eventType,
-                  );
-                },
-              )
-            : Center(
-                child: Icon(
-                  Icons.notifications_paused,
-                  size: 50.0,
-                ),
-              ),
+        body: FutureBuilder<bool>(
+          future: notificationsProvider.refreshNotificationList(),
+          builder: (ctx, snapshot) {
+            if (snapshot.hasData) {
+              return _displayNotificationsList();
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
       ),
     );
-    ;
+  }
+
+  Widget _displayNotificationsList() {
+    final notifications = notificationsProvider.getTodayNotifications();
+    return notifications.isNotEmpty
+        ? ListView.builder(
+            itemCount: notifications.length,
+            itemBuilder: (ctx, index) {
+              return NotificationItem(
+                id: notifications[index].id,
+                idOnServer: notifications[index].idOnServer,
+                title: notifications[index].title,
+                description: notifications[index].description,
+                date: notifications[index].date,
+                eventType: notifications[index].eventType,
+              );
+            },
+          )
+        : Center(
+            child: Icon(
+              Icons.notifications_paused,
+              size: 50.0,
+            ),
+          );
   }
 }

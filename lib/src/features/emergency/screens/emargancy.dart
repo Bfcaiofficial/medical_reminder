@@ -1,6 +1,8 @@
+import 'dart:io';
+
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -84,6 +86,22 @@ class _EmergancyState extends State<Emergancy>
     ];
   }
 
+  void _startBackgroundServiceOnAndroid() async {
+    if (Platform.isAndroid) {
+      final methodChannel = MethodChannel('com.example.lifement');
+      String data = await methodChannel.invokeMethod('startService');
+      print(data);
+    }
+  }
+
+  void _stopBackgroundServiceOnAndroid() async {
+    if (Platform.isAndroid) {
+      final methodChannel = MethodChannel('com.example.lifement2');
+      String data = await methodChannel.invokeMethod('stopService');
+      print(data);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     _initializeLabelsProvider();
@@ -148,7 +166,14 @@ class _EmergancyState extends State<Emergancy>
                       //     )..show(context);
                       //     return;
                       //   }
-                      // }
+                      // }{
+
+                      if (value) {
+                        _startBackgroundServiceOnAndroid();
+                      } else {
+                        _stopBackgroundServiceOnAndroid();
+                      }
+
                       setState(() {
                         isDeviceShakeEnabled = value;
                       });

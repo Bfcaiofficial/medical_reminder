@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 class Hospital {
   final String id;
   final String name;
+  final String cityId;
   final String address;
   final String phoneNumber;
   final bool hasRaysCenter;
@@ -16,6 +17,7 @@ class Hospital {
   Hospital({
     @required this.id,
     @required this.name,
+    @required this.cityId,
     @required this.address,
     @required this.phoneNumber,
     @required this.hasRaysCenter,
@@ -29,6 +31,7 @@ class Hospital {
   Hospital.fromJson(Map<String, dynamic> parsedJson)
       : id = parsedJson['id'],
         name = parsedJson['name'],
+        cityId = parsedJson['cityId'],
         address = parsedJson['address'],
         phoneNumber = parsedJson['phone'],
         hasRaysCenter = parsedJson['hasRaysCenter'],

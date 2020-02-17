@@ -40,7 +40,10 @@ class PersonalDetailsScreen extends StatelessWidget {
         ),
         body: Center(
           child: personalData == null
-              ? Text(labelsProvider.noPersonalDataAdded)
+              ? Text(
+                  labelsProvider.noPersonalDataAdded,
+                  textAlign: TextAlign.center,
+                )
               : SingleChildScrollView(
                   child: Container(
                     width: MediaQuery.of(context).size.width,

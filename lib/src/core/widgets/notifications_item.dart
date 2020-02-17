@@ -77,7 +77,6 @@ class NotificationItem extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10.0),
                     child: MaterialButton(
                       onPressed: () async {
-                        notificationsProvider.removeNotification(idOnServer);
                         _cancelScheduledNotificationOf(date);
                         switch (eventType) {
                           case EventType.booking:
@@ -85,6 +84,8 @@ class NotificationItem extends StatelessWidget {
                               final booking = bookingsProvider.bookingList
                                   .firstWhere((booking) => booking.id == id);
 
+                              notificationsProvider
+                                  .removeNotification(idOnServer);
                               bookingsProvider
                                   .removeBooking(booking.idOnServer);
                               break;
@@ -287,6 +288,8 @@ class NotificationItem extends StatelessWidget {
 
     int notificationId =
         (double.parse(notificationIdText) % 2147483647).toInt();
+
+    print('Notification Id: $notificationId');
 
     flutterLocalNotificationsPlugin.cancel(notificationId);
   }

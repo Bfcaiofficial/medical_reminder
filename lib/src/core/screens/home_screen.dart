@@ -1,21 +1,24 @@
+import 'dart:io';
+
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:medical_reminder/src/core/screens/profile.dart';
 import 'package:provider/provider.dart';
 import 'package:shake_event/shake_event.dart';
 
 import './../../core/resources/labels.dart';
+import './../../features/emergency/providers/personal_data_provider.dart';
+import './../../features/emergency/screens/personal_details_screen.dart';
+import './../../reminder_app.dart';
+import './../providers/auth_access_token_provider.dart';
 import './../providers/language_provider.dart';
 import './../providers/notifications_provider.dart';
 import './main_page_content.dart';
 import './more_page_content.dart';
 import './notifications_screen.dart';
-import './../../features/emergency/providers/personal_data_provider.dart';
-import './../../features/emergency/screens/personal_details_screen.dart';
-import './../../reminder_app.dart';
-import './../providers/auth_access_token_provider.dart';
+import 'profile.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String routeName = '/home_screen';
@@ -33,6 +36,84 @@ class _HomeScreenState extends State<HomeScreen> with ShakeHandler {
 
   NotificationDetails platformChannelSpecifics;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
+  void _startBackgroundServiceOnAndroid() async {
+    if (Platform.isAndroid) {
+      final methodChannel = MethodChannel('com.example.lifement');
+      String data = await methodChannel.invokeMethod('startService');
+      print(data);
+    }
+  }
+
+  void _stopBackgroundServiceOnAndroid() async {
+    if (Platform.isAndroid) {
+      final methodChannel = MethodChannel('com.example.lifement2');
+      String data = await methodChannel.invokeMethod('stopService');
+      print(data);
+    }
+  }
+
+  void _checkIfAppOpenedFromNativeNotification() async {
+    if (Platform.isAndroid) {
+      final methodChannel = MethodChannel('com.example.lifement.notifications');
+      bool data = await methodChannel.invokeMethod('isNotificationSent');
+      print(data);
+      if (data) {
+        final emergencyData = personalDataProvider.personalData;
+        if (emergencyData != null && emergencyData.phoneNumber.isNotEmpty) {
+          final location = await Geolocator().getCurrentPosition();
+          String locationUrl =
+              'https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}';
+          final emergencyMessage = """
+          \n\nEMERGENCY MESSAGE - HELP NEEDDED!!
+          \n\n${emergencyData.name} needs help from you, He is in danger now.
+          \n\nHis Data:
+          \nname: ${emergencyData.name},
+          \naddress: ${emergencyData.address},
+          \nbloodType: ${emergencyData.bloodType},
+          \nprevoius Diagnoses: ${emergencyData.previousDiagnosesAndNotes},
+          \n\n
+          \n\nرسالة طوارئ - المساعدة مطلوبة
+          \n\n${emergencyData.name} يحتاج مساعدتك انه فى خطر الان.
+          \n\nبياناته:
+          \nname: ${emergencyData.name},
+          \naddress: ${emergencyData.address},
+          \nbloodType: ${emergencyData.bloodType},
+          \nprevoius Diagnoses: ${emergencyData.previousDiagnosesAndNotes},
+
+          Location: $locationUrl
+          """;
+
+          personalDataProvider
+              .sendEmergencyMessage(
+            emergencyMessage,
+            emergencyData.phoneNumber,
+          )
+              .then((responseMessage) {
+            Flushbar(
+              icon: Icon(
+                responseMessage.startsWith('Emergency')
+                    ? Icons.done
+                    : Icons.error,
+                color: responseMessage.startsWith('Emergency')
+                    ? Colors.green
+                    : Colors.red,
+              ),
+              messageText: Text(
+                responseMessage,
+                style: Theme.of(context)
+                    .textTheme
+                    .display1
+                    .copyWith(color: Colors.white),
+              ),
+              duration: Duration(seconds: 5),
+            )..show(context);
+          }).catchError((error) => print(error.message));
+        }
+        Routes.sailor.navigate(PersonalDetailsScreen.routeName);
+      }
+    }
+  }
 
   @override
   void didChangeDependencies() {
@@ -155,33 +236,42 @@ class _HomeScreenState extends State<HomeScreen> with ShakeHandler {
         Provider.of<PersonalDataProvider>(context, listen: false);
 
     if (!personalDataProvider.isDataLoaded) {
-      personalDataProvider.getPersonalData().then((_) {
-        if (personalDataProvider.personalData != null) {
-          personalDataProvider.enableDeviceShakeFeature(
-            personalDataProvider.personalData.isDeviceShakeFeatureEnabled,
-          );
+      personalDataProvider.getPersonalData().then(
+        (_) {
+          if (personalDataProvider.personalData != null) {
+            personalDataProvider.enableDeviceShakeFeature(
+              personalDataProvider.personalData.isDeviceShakeFeatureEnabled,
+            );
 
-          final sensitivty = personalDataProvider.personalData.shakeSensitivity;
+            final sensitivty =
+                personalDataProvider.personalData.shakeSensitivity;
 
-          if (personalDataProvider.personalData.isDeviceShakeFeatureEnabled)
-            startListeningShake(120.0 - sensitivty);
-          else {
-            resetShakeListeners();
-          }
-        } else {
-          final isEnabledLocally =
-              personalDataProvider.isDeviceShakeEnabledLocaly();
-          personalDataProvider.enableDeviceShakeFeature(isEnabledLocally);
-          if (personalDataProvider.isDeviceShakeFeatureEnabled) {
-            startListeningShake(
-                120 - personalDataProvider.getLocallyStoredSensitivity());
-            print('Device shake feature enabled');
+            if (personalDataProvider.personalData.isDeviceShakeFeatureEnabled) {
+              startListeningShake(120.0 - sensitivty);
+              _startBackgroundServiceOnAndroid();
+            } else {
+              resetShakeListeners();
+              _stopBackgroundServiceOnAndroid();
+            }
           } else {
-            resetShakeListeners();
-            print('Device shake feature disabled');
+            final isEnabledLocally =
+                personalDataProvider.isDeviceShakeEnabledLocaly();
+            personalDataProvider.enableDeviceShakeFeature(isEnabledLocally);
+            if (personalDataProvider.isDeviceShakeFeatureEnabled) {
+              startListeningShake(
+                  120 - personalDataProvider.getLocallyStoredSensitivity());
+              _startBackgroundServiceOnAndroid();
+              print('Device shake feature enabled');
+            } else {
+              resetShakeListeners();
+              _stopBackgroundServiceOnAndroid();
+              print('Device shake feature disabled');
+            }
           }
-        }
-      });
+
+          _checkIfAppOpenedFromNativeNotification();
+        },
+      );
     } else {
       if (personalDataProvider.personalData != null) {
         if (personalDataProvider.personalData.isDeviceShakeFeatureEnabled) {
