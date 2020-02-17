@@ -1,6 +1,6 @@
-# medical_reminder
+# Lifement
 
-## this application will make the user able to:
+## This Application Will Make The User Able To:
 ### Adding remainders to his medicines or reservations so he don’t miss anything important for his health.
 ### Search for any surgery, rays or department in any hospital nearby him by using his location, and this will save a lot of time and effort for him.
 ### Add their children to be able to track their vaccines progress and find some useful information about each vaccine.
